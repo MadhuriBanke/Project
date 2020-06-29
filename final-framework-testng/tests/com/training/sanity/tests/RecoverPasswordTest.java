@@ -6,7 +6,6 @@ import java.util.Properties;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
@@ -14,16 +13,14 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import com.training.generics.ScreenShot;
-import com.training.pom.LoginPOM;
-import com.training.pom.SearchCoursesPOM;
+import com.training.pom.RecoverPasswordPOM;
 import com.training.utility.DriverFactory;
 import com.training.utility.DriverNames;
 
-public class ViewCourseTests {
+public class RecoverPasswordTest {
 	private WebDriver driver;
 	private String baseUrl;
-	private LoginPOM loginPOM;
-	private SearchCoursesPOM coursePOM;
+	private RecoverPasswordPOM recoverPasswordPOM;
 	private static Properties properties;
 	private ScreenShot screenShot;
 
@@ -37,8 +34,7 @@ public class ViewCourseTests {
 	@BeforeMethod
 	public void setUp() throws Exception {
 		driver = DriverFactory.getDriver(DriverNames.CHROME);
-		loginPOM = new LoginPOM(driver); 
-		coursePOM = new SearchCoursesPOM(driver);
+		recoverPasswordPOM = new RecoverPasswordPOM(driver); 
 		baseUrl = properties.getProperty("baseURL");
 		screenShot = new ScreenShot(driver); 
 		// open the browser 
@@ -47,24 +43,21 @@ public class ViewCourseTests {
 	
 	@AfterMethod
 	public void tearDown() throws Exception {
-		Thread.sleep(2000);
+		Thread.sleep(1000);
 		driver.quit();
 	}
+	
 	@Test
-	public void viewCourseTests() throws InterruptedException {
-		loginPOM.sendUserName("admin");
-		loginPOM.sendPassword("admin@123");
-		loginPOM.clickLoginBtn(); 
-		screenShot.captureScreenShot("LoggedIn");
-		coursePOM.clickCourseLink();
-		screenShot.captureScreenShot("CourseList");
-		coursePOM.sendKeyword("selenium");		
-		coursePOM.ClickSearchBtn();
-		screenShot.captureScreenShot("filteredResults");
-		Assert.assertEquals(driver.getTitle(), "My Organization - My education - Course list");
-		String Actual = driver.findElement(By.xpath("//*[contains(text(),'Selenium9898')]")).getText();
-		Assert.assertEquals(Actual, "Selenium9898");
-		   
+	public void recoverLostPswd() throws InterruptedException {
+		recoverPasswordPOM.clicklostPswdLink();
+		recoverPasswordPOM.enterUserText("Madhuri");
+		recoverPasswordPOM.clicksendMessageBtn();
+		Thread.sleep(2000);
+		screenShot.captureScreenShot("Password Reset");
+		String actual = driver.findElement(By.xpath("//div[@class=\"alert alert-info\"]")).getText();
+		Assert.assertEquals(actual, "Your password has been emailed to you");
+		
 	}
+	
+	
 }
-
